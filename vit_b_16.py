@@ -19,6 +19,7 @@ from torchvision.models import vit_b_16
 
 import lightning as L
 from lightning.pytorch import Trainer
+from lightning.pytorch.callbacks import ModelCheckpoint
 
 from datasets import load_dataset
 from schedulefree.adamw_schedulefree import AdamWScheduleFree
