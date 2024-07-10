@@ -120,7 +120,7 @@ def main():
     
     # prepare model
     vision_model = vit_b_16(pretrained=False)
-    vision_model.heads = nn.Linear(1024, args.num_class)
+    vision_model.heads = nn.Linear(768, args.num_class)
 
     # instantiate the model
     vision_transformer = VisionTransformer(vision_model, args)
