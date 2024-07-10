@@ -19,6 +19,7 @@ from torchvision.models import vit_l_16
 
 import lightning as L
 from lightning.pytorch import Trainer
+from lightning.pytorch.callbacks import ModelCheckpoint
 
 from datasets import load_dataset
 from schedulefree.adamw_schedulefree import AdamWScheduleFree
@@ -66,7 +67,6 @@ class VisionTransformer(L.LightningModule):
         self.args = args
         self.train_loss = []
         self.val_loss = []
-        self.count = 1
         
     def training_step(self, batch, batch_idx):
         self.model.train()
@@ -98,9 +98,6 @@ class VisionTransformer(L.LightningModule):
         self.val_loss.append(loss.item())
         self.log("Val_Loss", loss, prog_bar=True)
 
-        torch.save(self.model.state_dict(), f"epoch{self.count}.pt")
-        self.count +=1
-
         return loss
 
 def main():
@@ -120,14 +117,26 @@ def main():
     
     # prepare model
     vision_model = vit_l_16(pretrained=False)
-    vision_model.heads = nn.Linear(1024, args.num_class)
+    vision_model.heads = nn.Linear(768, args.num_class)
 
     # instantiate the model
     vision_transformer = VisionTransformer(vision_model, args)
 
+    # Define ModelCheckpoint callback
+    checkpoint_callback = ModelCheckpoint(
+        dirpath="checkpoints",
+        filename="{epoch:02d}-{val_loss:.2f}",
+        save_top_k=-1,  # Save all models
+        mode="min",
+        monitor="Val_Loss",
+        save_weights_only=True,
+        every_n_epochs=1
+    )
+    
     # train the model
     trainer = Trainer(max_epochs=args.epochs,
-                      accelerator=args.device)
+                      accelerator=args.device,
+                      callbacks=[checkpoint_callback])
     
     # fit the model
     trainer.fit(vision_transformer, train_dataloader, test_dataloader)
