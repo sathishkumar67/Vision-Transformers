@@ -127,8 +127,7 @@ def main():
 
     # train the model
     trainer = Trainer(max_epochs=args.epochs,
-                      accelerator=args.device,
-                      strategy="deepspeed_stage_2")
+                      accelerator=args.device)
     
     # fit the model
     trainer.fit(vision_transformer, train_dataloader, test_dataloader)
