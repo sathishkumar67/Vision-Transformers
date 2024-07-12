@@ -125,7 +125,7 @@ def main():
     # Define ModelCheckpoint callback
     checkpoint_callback = ModelCheckpoint(
         dirpath="checkpoints",
-        filename="{epoch:02d}-{val_loss:.2f}",
+        filename="{epoch:02d}",
         save_top_k=-1,  # Save all models
         mode="min",
         monitor="Val_Loss",
