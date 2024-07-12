@@ -39,7 +39,7 @@ from huggingface_hub import hf_hub_url, hf_hub_download, login, HfApi
 # define the args
 @dataclass
 class Args:
-    epochs: int = 10
+    epochs: int = 5
     lr: float = 3e-4
     batch_size: int = 32
     seed: int = 42
